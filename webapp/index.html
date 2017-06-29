@@ -1,0 +1,827 @@
+<!DOCTYPE html>
+<html >
+<head>
+  <meta charset="UTF-8">
+  <title>Sentiment Analysis</title>
+  
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/meyer-reset/2.0/reset.min.css">
+
+  
+      <link rel="stylesheet" href="css/style.css">
+<style>
+/* Add animation to "page content" */
+.animate-bottom {
+  position: relative;
+  -webkit-animation-name: animatebottom;
+  -webkit-animation-duration: 1s;
+  animation-name: animatebottom;
+  animation-duration: 1s
+}
+
+@-webkit-keyframes animatebottom {
+  from { bottom:-80px; opacity:0 } 
+  to { bottom:0px; opacity:1 }
+}
+
+@keyframes animatebottom { 
+  from{ bottom:-80px; opacity:0 } 
+  to{ bottom:0px; opacity:1 }
+}
+
+
+h1{
+  font-size: 30px;
+  color: #fff;
+  text-transform: uppercase;
+  font-weight: 300;
+  text-align: center;
+  margin-bottom: 15px;
+}
+table{
+  width:100%;
+  table-layout: fixed;
+  padding-bottom: 20px;
+
+}
+.tbl-header{
+  background-color: rgba(37, 196, 129,0.8);
+ }
+.tbl-content{
+  height:300px;
+  overflow-x:auto;
+  margin-top: 0px;
+  border: 1px solid rgba(37, 196, 129,0.5);
+  background-color: rgba(255,255,255,0.2);
+}
+th{
+  padding: 20px 15px;
+  text-align: left;
+  font-weight: 650;
+  font-size: 15px;
+  color: #fff;
+}
+td{
+  padding: 15px;
+  text-align: left;
+  vertical-align:middle;
+  font-weight: 300;
+  font-size: 12px;
+  color: #fff;
+  border-bottom: solid 1px rgba(255,255,255,0.1);
+}
+
+
+/* demo styles */
+
+@import url(https://fonts.googleapis.com/css?family=Roboto:400,500,300,700);
+body{
+  background-image: url("http://localhost:8081/images/t4.jpg");
+  font-family: 'Roboto', sans-serif;
+  background-size: cover;
+}
+section{
+  margin: 50px;
+
+}
+
+
+/* follow me template */
+
+/* for custom scrollbar for webkit browser*/
+
+::-webkit-scrollbar {
+    width: 6px;
+} 
+::-webkit-scrollbar-track {
+    -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3); 
+} 
+::-webkit-scrollbar-thumb {
+    -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3); 
+}
+#chart_div
+{
+margin-top: 20px;
+margin-bottom:90px;
+
+}
+.chart_heading
+{
+font-family: 'Exo', sans-serif;
+font-weight: 200;
+text-align: center;
+color: #fff;
+margin-top: 90px;
+font-size: 30px;
+}
+
+.chart_heading span
+{
+color: #25c481 !important;
+}
+
+#Ultra
+{
+
+margin-left:540px;
+margin-top:20px;
+
+}
+#he1{
+font-size:20px;
+color:white;
+}
+</style>
+ 
+ <script>
+ // '.tbl-content' consumed little space for vertical scrollbar, scrollbar width depend on browser/os/platfrom. Here calculate the scollbar width .
+$(window).on("load resize ", function() {
+  var scrollWidth = $('.tbl-content').width() - $('.tbl-content table').width();
+  $('.tbl-header').css({'padding-right':scrollWidth});
+}).resize();
+ </script>
+<script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+<script type="text/javascript">
+google.charts.load('current', {packages: ['corechart', 'line']});
+google.charts.setOnLoadCallback(drawLineStyles);
+var options1 = {
+		chartArea: {width: '70%'},
+        hAxis: {
+          title: 'Date'
+        },
+        vAxis: {
+          title: 'Average Sentiment'
+        }
+      };
+function drawLineStyles() {
+var data = new google.visualization.DataTable();
+data.addColumn('date', 'Date');
+data.addColumn('number','socialhkv');
+data.addRows([[new Date(2017,03,11),0.17]]);
+var chart1 = new google.visualization.LineChart(document.getElementById('chart_div'));
+      chart1.draw(data, options1);
+    }
+</script>
+<script>
+google.charts.load('current', {packages: ['corechart', 'bar']});
+
+var flag=1;
+google.charts.setOnLoadCallback(drawBasic);
+    function run() {
+        
+		flag=document.getElementById("Ultra").value;
+		google.charts.setOnLoadCallback(drawBasic);
+    }
+	
+var options = {
+        title: 'Sentiment scores of Restaurant',
+        chartArea: {width: '50%'},
+        hAxis: {
+          title: 'Sentiment score',
+          minValue: 0
+        },
+        vAxis: {
+          title: 'Category'
+        }
+      };
+
+function drawBasic() {
+var data1=google.visualization.arrayToDataTable([
+['Category','Sentiment Score',],['food',0.24],['ambience',0.22],['service',0.20]
+]);
+var chart = new google.visualization.BarChart(document.getElementById('chart_div1'));
+
+if(flag==1) chart.draw(data1, options);
+}
+</script>
+</head>
+
+<body>
+  <section class="animate-bottom">
+  <!--for demo wrap-->
+  <div class="chart_heading">Sentiment <span>Scores</span></div>
+  <br>
+  <div class="tbl-header">
+    <table cellpadding="0" cellspacing="0" border="0">
+      <thead>
+        <tr>
+		  <th>Restaurant</th>
+		  <th>Date</th>
+		  <th>Sentence_id</th>
+          <th>Sentence</th>
+          <th>Category</th>
+		  <th>Sentiment polarity</th>
+        </tr>
+      </thead>
+    </table>
+  </div>
+  <div class="tbl-content">
+    <table cellpadding="0" cellspacing="0" border="0">
+	<tbody>
+<tr><td>socialhkv</td><td>11-03-17</td><td>1</td><td>ï»¿The place is absolutely wonderful, creatively designed with a rustic yet imaginative decor, a delectable food menu, and a very hospitable staff!!</td><td>food, ambience, service</td><td>0.60</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>2</td><td> Cheers!</td><td></td><td>0.00</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>3</td><td>  P.</td><td></td><td>0.00</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>4</td><td>S.</td><td></td><td>0.00</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>5</td><td> Must visit this place on a rainy day !!</td><td>ambience, service</td><td>0.00</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>6</td><td> Insane decor, with the quirkiest of alcohol and food!</td><td>food</td><td>-1.00</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>7</td><td> Good music and good vibes.</td><td>food, ambience, service</td><td>0.70</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>8</td><td> If you are looking at this review trying to make a decision about this place, I suggest you check it out yourself, because you won't be disappointed!</td><td>ambience, service</td><td>-0.94</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>9</td><td> Great place to hang with your friends!</td><td>ambience, service</td><td>1.00</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>10</td><td> Great marketing concepts.</td><td></td><td>0.80</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>11</td><td> Food and beer @ 19 was an amazing experience for me an my friends.</td><td>food</td><td>0.60</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>12</td><td> Had a super fun time and also was great to see everyone making an effort to collect the change and wait in line till their turn to get the coupons.</td><td>service</td><td>0.48</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>13</td><td> The staff was very friendly and sweet and the ambience was great.</td><td>food, ambience</td><td>0.55</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>14</td><td> Looking forward to visit again.</td><td>ambience</td><td>0.00</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>15</td><td> One of the best places in town on my list.</td><td>ambience, service</td><td>1.00</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>16</td><td> The famous 'social pariwaar' who had its origin from Connaught place is now extended to our door step @nehru place.</td><td>ambience, service</td><td>0.27</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>17</td><td> Finally it is opened for party animals from this week onwards.</td><td>service</td><td>0.00</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>18</td><td> This social is totally different and unique from its sisters concern.</td><td>service</td><td>0.14</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>19</td><td> Ambience is innovative, unique, eye catchy and different.</td><td>ambience</td><td>0.29</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>20</td><td> They have hanging chairs and hanging tables along with stadium style seating.</td><td></td><td>0.00</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>21</td><td> They have three moving seatings in a shape of amusement park ride.</td><td></td><td>0.00</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>22</td><td> This social quite small as compared to HKV and CP.</td><td></td><td>-0.11</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>23</td><td> Food and drink menu are same nothing new in it.</td><td>food</td><td>0.07</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>24</td><td> But this time it's rocking like a hell.</td><td>service</td><td>0.00</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>25</td><td> Within few days of its opening number of ppl visiting this place has increased drastically.</td><td>ambience, service</td><td>-0.20</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>26</td><td> It's a house full show on everyday.</td><td>service</td><td>0.07</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>27</td><td> I never enjoyed dancing with my friends so much.</td><td>food, service</td><td>-0.02</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>28</td><td> I have to add this place into my 'second home' exclusive club.</td><td>ambience, service</td><td>0.00</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>29</td><td> After having social in their plate Nehru place epicuria has smashed HKV and CP like a tomato.</td><td>ambience, service</td><td>0.03</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>30</td><td> All party lovers are under social obligation to visit this place and get urself entertained.</td><td>ambience, service</td><td>0.03</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>31</td><td> Bravo to Social.</td><td></td><td>0.03</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>32</td><td> Social is one of the Delhi's favourite places.</td><td>ambience, service</td><td>0.03</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>33</td><td> They just end up doing everything right.</td><td></td><td>0.29</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>34</td><td> And that's what has been done with Nehru place social.</td><td>ambience, service</td><td>0.03</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>35</td><td> The food, the place, the dÃ©cor, their service and thier atmosphere is just so perfect .</td><td>food, ambience, service</td><td>1.00</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>36</td><td> I happened to go for the social@19.</td><td></td><td>0.00</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>37</td><td> Where they designed drinks n food for Rs.</td><td>food</td><td>0.00</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>38</td><td>19.</td><td></td><td>0.00</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>39</td><td> And the place was packed with people.</td><td>food, ambience, service</td><td>0.00</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>40</td><td> Still they manage to impress everybody.</td><td>ambience</td><td>0.00</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>41</td><td> Their drinks were amazing and so was the food.</td><td>food</td><td>0.60</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>42</td><td> I also ordered butter chicken and trust me it was the best butter chicken I have ever had.</td><td>food</td><td>-0.07</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>43</td><td> I had never thought that the best butter chicken of my life would be at social.</td><td>food, ambience, service</td><td>0.14</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>44</td><td> The dÃ©cor is very nice.</td><td></td><td>0.78</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>45</td><td> Yup.</td><td></td><td>0.00</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>46</td><td> Good things end there.</td><td>food, service</td><td>0.70</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>47</td><td> The service sucks the food sucks also they took my card for security that I don't run away..</td><td>food, service</td><td>-0.30</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>48</td><td> I mean which cafe does that?</td><td>service</td><td>-0.31</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>49</td><td> It's a shame!</td><td></td><td>0.00</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>50</td><td> The wrong order was given to us 2 times and the staff looked so unprofessional.</td><td>ambience, service</td><td>-0.50</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>51</td><td> On top of that I was feeling very sick and I told the staff that I need the bill as soon as possible or I will throw up there.</td><td>ambience</td><td>-0.14</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>52</td><td> They took 15 minutes to get the bill and they were not sure which bill was ours and then took 5 minutes more to get the card back!</td><td>service</td><td>0.08</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>53</td><td> Worst place I've ever been to!</td><td>ambience, service</td><td>-1.00</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>54</td><td> Never going back here or recommend it to anyone Are you guys crazy at SOCIAL, what a deal!</td><td>service</td><td>-0.19</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>55</td><td> It's only you guys who could have done it and that too like a BOSS!</td><td></td><td>0.00</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>56</td><td> I went with 15 people and it was insane..</td><td></td><td>-1.00</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>57</td><td> Music scene needs a repeat!</td><td>ambience</td><td>0.00</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>58</td><td> Loved the fact that I literally went with my coin boxes to fetch coins for Rs.</td><td></td><td>0.70</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>59</td><td> 19 exact change and not use any plastic money..</td><td>service</td><td>0.25</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>60</td><td> Hats off to you guys, also please start deliveries, I loved your keema & lal maas paav!!!!</td><td></td><td>1.00</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>61</td><td>  The decor is brilliant, ferris wheels: who would have thought?!</td><td></td><td>1.00</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>62</td><td> Favourite part is the band banner..!!</td><td>service</td><td>0.00</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>63</td><td>  Thanks for hosting such a fun night guys and kudos to your service staff who could  manage this with soo many people..</td><td>service</td><td>0.25</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>64</td><td> Another feather on the cap for Social this year, or should I rather say- another album to their 'Social Band'-given the latest music and computer techie themed cafe which has opened its door to the thirsty delhi janta with an absolute BANG!</td><td>service</td><td>0.20</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>65</td><td>  Nehru Place Social is the latest buzz.</td><td>ambience, service</td><td>0.27</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>66</td><td> With one of the coolest vibes in the city, it's a much needed relief from the over hyped and done to death resto-lounges like Flying Saucer and Chatter house in the Epicuria  Mall.</td><td>ambience, service</td><td>0.20</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>67</td><td>  The place is delightful, every detail is fun and quirky.</td><td>food, ambience, service</td><td>0.43</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>68</td><td> Be it the wall covered with loudspeakers or the bright red banner adorning the DJ console, or the feature of suspending the tables overheard to convert the place for dancing (ð)</td><td>ambience, service</td><td>0.35</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>69</td><td> I simply love the decor.</td><td></td><td>0.50</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>70</td><td>   So I attended the â¹19 marketing gimmick night.</td><td></td><td>0.00</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>71</td><td>  It's a forgone conclusion that the place would be maddening and so any sensible person would be mentally prepared for crowded bar and over worked staff.</td><td>ambience, service</td><td>-0.10</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>72</td><td> But I loved the concept, and it was a super fun night for me and my friends.</td><td></td><td>0.44</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>73</td><td> The music was great, a live band was smashing all time favourite hits, and later the DJ played some kick ass music.</td><td>food, service</td><td>0.31</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>74</td><td>  Though I wasn't hungry, my friends did manage to get some food and it was nice, everyone was happily chomping away..</td><td>food</td><td>0.70</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>75</td><td> ð  The drinks were great- specially at â¹19, it's was a steal, almost like a freebie!</td><td>food</td><td>0.62</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>76</td><td>  Over all- Social Nehru Place is the best thing that happened to Nehru Place.</td><td>ambience, service</td><td>0.52</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>77</td><td> ðð¼ Better than social def col..</td><td>service</td><td>0.27</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>78</td><td> Loved the music ..</td><td></td><td>0.70</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>79</td><td> Went there for opening ..</td><td>service</td><td>0.00</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>80</td><td> Finally a decent/ friendly bar near gk2..</td><td></td><td>0.16</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>81</td><td>the interiors were also quite nice ..</td><td></td><td>0.60</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>82</td><td>would definitely be visiting again !!</td><td></td><td>0.00</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>83</td><td> We had a gang of 7 and couldn't do anything but stand and wait in long queue just to get in.</td><td></td><td>-0.05</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>84</td><td> After getting in we again stood still and found no place to even stand let alone a table to sit and seat ourselves.</td><td>ambience, service</td><td>0.00</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>85</td><td> We went in an offer period, and had to shed an exact change of Rs.</td><td></td><td>0.25</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>86</td><td>19 to get a food coupon.</td><td>food</td><td>0.00</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>87</td><td> The only thing disappointing is whenever we found a server, he told us that the kitchen is on hold, so at last we had to settle for glasses of fruit juice.</td><td>food</td><td>-0.20</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>88</td><td> Also, when buying rounds the person wasn't very active and we had to let the opportunity slip of atleast having a drink.</td><td>food, service</td><td>-0.17</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>89</td><td> So, as of now I won't visit this place, but might visit sometime in future when there won't be any offer running as the dÃ©cor was nice and looked inviting.</td><td>food, ambience, service</td><td>0.30</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>90</td><td> Had an amazing time tonight with the 19 Rs offer for EVERYTHING on the menu!</td><td>service</td><td>0.75</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>91</td><td> The place looks fantastic.</td><td>ambience, service</td><td>0.40</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>92</td><td> the music was amazing and the crowd was managed well...</td><td></td><td>0.60</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>93</td><td> Dude, great night.</td><td></td><td>0.80</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>94</td><td> I loved everything from the decor to the free drinks.</td><td>food</td><td>0.55</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>95</td><td> Respect the company for taking the time to feed us booze hounds.</td><td>service</td><td>0.00</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>96</td><td> Also, the free snacks were always around, unlike most places.</td><td>ambience, service</td><td>0.45</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>97</td><td> Music was sick.</td><td></td><td>-0.71</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>98</td><td> I loved the fact that every restaurant is different, but it was too crowded.</td><td></td><td>0.35</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>99</td><td> But what do you expect when there's free booze?</td><td></td><td>0.40</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>100</td><td> Anyways, thanks social, was a crazy night!</td><td></td><td>-0.17</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>101</td><td> Nice place to hang out with friends..</td><td>ambience, service</td><td>0.60</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>102</td><td> really liked the ambience it has both indoor and outdoor seating..</td><td>ambience</td><td>0.60</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>103</td><td>nice food and drinks.</td><td>food</td><td>0.60</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>104</td><td> Though place was little crowded still I liked the place.</td><td>ambience, service</td><td>0.21</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>105</td><td> Worst decision as a foodie to believe in a scheme that the management just didn't know how to manage professionally.</td><td></td><td>-0.45</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>106</td><td> Total mismanagement of crowds and orders, misleading advertisement on social media, strange rules and regulations and absolutely disastrous service.</td><td>service</td><td>-0.18</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>107</td><td> My entire evening was one big mess.</td><td></td><td>-0.06</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>108</td><td> I had gone in a group and the others didn't want to leave so I had to stay on.</td><td></td><td>0.00</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>109</td><td> And guess what was on offer?</td><td></td><td>0.00</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>110</td><td> Warm beers and vada pavs.</td><td>food</td><td>0.60</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>111</td><td> I expected better from a brand that I've loved so much previously.</td><td>service</td><td>0.23</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>112</td><td> I know this is probably rude but then after what we faced yesterday, this is the only description I could think of.</td><td></td><td>-0.15</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>113</td><td> I might never visit Nehru Place Social again lest the horrid memories come flooding back.</td><td>ambience, service</td><td>0.02</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>114</td><td> Sorry but not sorry.</td><td></td><td>-0.12</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>115</td><td> Well my rating here is just for the food!</td><td>food</td><td>0.00</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>116</td><td> I have cut the 2 stars for the deal they had today.</td><td></td><td>0.00</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>117</td><td> We felt really cheated about their 19rs deal which claimed everything at rs19.</td><td></td><td>0.20</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>118</td><td> We all know it was a marketing strategy and it may have gained them publicity and helped them make profit out of customers but we as regular members of social felt disheartened.</td><td>service</td><td>0.02</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>119</td><td> Though we knew there must be some conditions for the deal but all they had was 3 types of vada paos and banta sort of drinks and tubord under that.</td><td>food, ambience</td><td>0.00</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>120</td><td> We didnt even buy anything from the deal as it was so crowded and these guys didn't know how to manage the crowd.</td><td></td><td>0.00</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>121</td><td> We got out table after waiting for an hour and that too when we told the waiter that we are ordering a la carte which benefited them.</td><td>food, service</td><td>0.00</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>122</td><td> Also, they were not selling the coupons throughout!</td><td></td><td>0.00</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>123</td><td> Well I am totally disappointed with this outlet due to their ambience.</td><td>ambience</td><td>-0.44</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>124</td><td> Though it's different and I really liked it in the pictures but there's no privacy.</td><td></td><td>0.30</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>125</td><td> Its designed in a way that there is no comfortable seating for two people.</td><td>food, service</td><td>-0.20</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>126</td><td> If you are in a group then its fine.</td><td>food</td><td>0.42</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>127</td><td> The food was amazingly delicious as always.</td><td>food</td><td>1.00</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>128</td><td> Thats why we chose to stay there otherwise there wasnt any other reason.</td><td></td><td>-0.12</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>129</td><td> Well social is my all time favorite hangout place..</td><td>service</td><td>0.27</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>130</td><td>n this new outlet of social in nehru place no doubt is damm amazing with awesome interior but guys i m very disappointed this time first of all i felt cheated as your deal says everything in just 19 rupees..</td><td>ambience, service</td><td>0.17</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>131</td><td>although we didn't take your 19 rupees deal n order from ala'cart even thn it took more then hour to arrange a seat for two people n also the staff was bit rude in answering the quarries....</td><td></td><td>0.10</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>132</td><td>but the food was hell amazing..</td><td>food</td><td>0.60</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>133</td><td>may rating is for food and ambience only..</td><td>food, ambience</td><td>0.00</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>134</td><td>i hope when i visit next time i expect more of courtesy n less rudeness from you guyz..</td><td>service</td><td>0.11</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>135</td><td>best of luck..</td><td></td><td>1.00</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>136</td><td> It was a horrible experience...</td><td></td><td>-1.00</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>137</td><td> A very poorly managed event.</td><td></td><td>-0.52</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>138</td><td> There was no clarity about anything.</td><td></td><td>0.00</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>139</td><td> They could not even control the crowd.</td><td></td><td>0.00</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>140</td><td> Every individual was supposed to have exactly 19 rupees in change.</td><td></td><td>0.12</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>141</td><td> Also the employees showed a bias towards customers if they knew the person they were handing out the change to them other wise not.</td><td>service</td><td>0.29</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>142</td><td> The employees were not even listening to customer.</td><td>service</td><td>0.00</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>143</td><td> It seems that people came only because of the 19 rupees scheme other wise it won't even have gained the popularity it did.</td><td>service</td><td>0.19</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>144</td><td> Think twice before going here.</td><td></td><td>0.00</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>145</td><td> Social was running the 19 rupees scheme.</td><td></td><td>0.03</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>146</td><td> I don't know whether it was marketing or a social disaster for them.</td><td></td><td>0.03</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>147</td><td> They were serving warm beer, 3 kinds of Paos keema pao, laal maas pao and Vada pao.</td><td>food, service</td><td>0.60</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>148</td><td> I ordered a laal maas and a keema pao- I couldn't distinguish what is what and plus one of my Paos had the Mint sauce sprayed in the plate- as the server had forgotten to put it in a bowl.</td><td>food</td><td>0.00</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>149</td><td> They were not at all prepared for the crowd.</td><td></td><td>0.00</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>150</td><td> I had to ask 5 different servers to please take my order but all of them shrugged and said give me some time someone will attend to you.</td><td>service</td><td>0.00</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>151</td><td> After I went out to drop a friend apparently they had closed the entry to the restaurant- only a select special few ppl were allowed to enter.</td><td>service</td><td>0.02</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>152</td><td> One guy was even refused entry coz he was with his parents.</td><td></td><td>0.00</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>153</td><td> they said parents stay out and you can come in.</td><td></td><td>0.00</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>154</td><td> The restaurant was in a total mess.</td><td></td><td>-0.09</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>155</td><td> No one knew what to do or how to handle the situation.</td><td>ambience</td><td>0.00</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>156</td><td> Not expected from social.</td><td></td><td>0.04</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>157</td><td>  Finally Social Has come to Epicuria.</td><td></td><td>0.03</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>158</td><td> And yes , i finally got the chance to visit this place on Wednesday evening with my family.</td><td>ambience, service</td><td>0.00</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>159</td><td>  LOCATION - Located in the upper ground floor of Epicuria.</td><td>ambience</td><td>0.00</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>160</td><td>  AMBIANCE - A lively and electric ambiance with a comfort and innovative seating.</td><td>food, ambience, service</td><td>0.32</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>161</td><td> Social is all about having chat sessions over their awesome food and drinks.</td><td>food</td><td>0.52</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>162</td><td> We had to wait for 15 mins approx.</td><td></td><td>0.00</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>163</td><td> To get ourselves a table.</td><td></td><td>0.00</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>164</td><td>  SERVICE - The service was EXCEPTIONAL.</td><td>service</td><td>0.67</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>165</td><td> We got our order in less than 10 mins.</td><td></td><td>-0.17</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>166</td><td> That is something positive from a restaurant.</td><td></td><td>0.23</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>167</td><td>  Before , starting about my drinks and food review.</td><td>food</td><td>0.00</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>168</td><td> I would like to tell they had an Awesome Offer going on certain dishes.</td><td></td><td>0.61</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>169</td><td> That is each person gets 3 coupons at rs 19 each.</td><td></td><td>0.00</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>170</td><td> From these coupons , one can select 3 items from the special menu.</td><td></td><td>0.36</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>171</td><td> The special menu has all in all 6 items.</td><td></td><td>0.36</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>172</td><td>  So being Vegetarian we ordered Bhelpuri , Papdi Chaat , Mocktails, Beer.</td><td>food</td><td>0.00</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>173</td><td>  DRINKS- 1.</td><td></td><td>0.00</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>174</td><td> GUAVA CHILLY MOCKTAIL - First of all happy to be served a mocktail at a throwaway price of just 19 rs.</td><td></td><td>0.15</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>175</td><td> though usually the quality degrades to such offers.</td><td>ambience, service</td><td>-0.05</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>176</td><td> But not here at social.</td><td></td><td>0.03</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>177</td><td> The drink was superb.</td><td>food</td><td>1.00</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>178</td><td> With the soothing guava in every sip and a hint of Chilly at the last.</td><td>food</td><td>-0.30</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>179</td><td> A perfect mocktail for me.</td><td></td><td>1.00</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>180</td><td>  2.</td><td></td><td>0.00</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>181</td><td> TUBORG BEER - My brother ordered for a tuborg beer at 19Rs.</td><td>food</td><td>0.00</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>182</td><td> Thats it.</td><td></td><td>0.00</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>183</td><td> And he was happy with the price and beer of course.</td><td>food</td><td>0.80</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>184</td><td>  FOOD - With only 2 items , in their special menu for Vegetarians.</td><td>food</td><td>0.18</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>185</td><td>  1.</td><td></td><td>0.00</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>186</td><td> PAPDI CHAAT - The spices and flavours make you remember of The Old Delhi Chaat.</td><td></td><td>0.10</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>187</td><td> The serving style of Innovative.</td><td></td><td>0.50</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>188</td><td> The bhalle was really soft.</td><td>food</td><td>0.10</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>189</td><td> The quantity was apt with the 19rs tag.</td><td></td><td>0.60</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>190</td><td>  2.</td><td></td><td>0.00</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>191</td><td> BHELPURI - Oh yeah !!</td><td></td><td>0.00</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>192</td><td> Once i had their Bhelpuri , i remembered the Bombay Bhelpuri.</td><td></td><td>0.00</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>193</td><td> Gave full justification to it.</td><td></td><td>0.35</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>194</td><td> Loved it.</td><td></td><td>0.70</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>195</td><td>  As we went to Social for a Quick Bite.</td><td>food</td><td>0.18</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>196</td><td> I will surely visit this outlet again.</td><td></td><td>0.50</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>197</td><td> That time i ll try regular menu.</td><td>service</td><td>0.00</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>198</td><td> Till then Social Thumbs Up for great service and good food.</td><td>food, service</td><td>0.51</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>199</td><td>  I took my parents to a newly opened place in Nehru Place named Social.</td><td>ambience, service</td><td>0.08</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>200</td><td> The place was crowded and there were people waiting at the entrance.</td><td>ambience, service</td><td>0.00</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>201</td><td> The person at the entrance was allowing some people to go in and telling others that entry was closed.</td><td>service</td><td>-0.10</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>202</td><td> On inquiring a bit, that person told us "you can't go in because you have got parents along with you.</td><td></td><td>0.00</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>203</td><td> If you want, you can go in alone!</td><td></td><td>0.00</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>204</td><td> Unke liye nahi hai ye jagah!</td><td></td><td>0.00</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>205</td><td>" The person at the gate was extremely rude and was pushing me away.</td><td></td><td>-0.30</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>206</td><td> I don't understand that who on earth is he to judge people by their age?!</td><td></td><td>0.00</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>207</td><td> Can they not enjoy clubbing if they wish to??</td><td>food, service</td><td>-0.20</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>208</td><td> The review looks odd right.</td><td>ambience</td><td>0.06</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>209</td><td> So what I felt today.</td><td></td><td>0.00</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>210</td><td> I'm glad you guys pulled up an amazing looking place but flushed on your services.</td><td>ambience, service</td><td>0.55</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>211</td><td> As I walked up to the gate asking for a table around 6:00 pm, I was told there is a waiting for an hour.</td><td></td><td>0.00</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>212</td><td> I was fine ordering drinks at the bar counter waiting for my table, but they even denied to write down the names.</td><td>food</td><td>0.13</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>213</td><td> Sir, it's my Birthday and I'm standing here with 4 friends of mine and few joining in later, the manager doesn't seemed to care.</td><td>service</td><td>-0.10</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>214</td><td> Well, biggest turn off.</td><td></td><td>0.00</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>215</td><td> So, never stepping back there for life.</td><td>ambience, service</td><td>0.00</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>216</td><td>  P.</td><td></td><td>0.00</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>217</td><td>S: It's not only happening place in town, these guys really need to put their ego at right places.</td><td>ambience, service</td><td>0.16</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>218</td><td> I haven't been a fan of social after I had a bad experience at the one in hauz khas but today when my sister wanted to go try the Nehru Place outlet I decided to go for it and give social another chance.</td><td>ambience, service</td><td>-0.21</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>219</td><td> Honestly, when I reached there the way the staff was not well coordinated and the way they made me shift places and made me wait for nearly an hour though I was told to wait for 10 mins made me question why did I land up at social again.</td><td>ambience, service</td><td>0.24</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>220</td><td> But once we were settled and got ourselves a table things became better.</td><td>service</td><td>0.50</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>221</td><td> The best part about social is the food.</td><td>food, service</td><td>0.52</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>222</td><td> Though the waiter serving us tried his best to communicate what he wanted to but somehow there was a bridge.</td><td>ambience</td><td>1.00</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>223</td><td> Talking about the food; we ordered the corn falafel bao in vegetarian, as I was the only vegetarian on the table I could only taste this dish and it was good though nothing unusual; my sisters ordered the keema pao, white sauce pasta, fried chicken burger and my mom ordered the lettuce wrap with chicken satay.</td><td>food, service</td><td>-0.04</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>224</td><td> The mother is one person who is very hard to please when it comes to food simply loved her lettuce wrap.</td><td>food</td><td>0.16</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>225</td><td> The looked amazing too.</td><td>ambience</td><td>0.60</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>226</td><td> The rest of the things were decent too.</td><td></td><td>0.17</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>227</td><td> For drinks we ordered the Oreo mud pot shake and the social shake.</td><td>food</td><td>0.03</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>228</td><td> Both were stupendous and so worth the calories.</td><td></td><td>0.30</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>229</td><td> Loved every sip of if.</td><td></td><td>0.70</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>230</td><td> We also tried the chocolate blood bath for dessert.</td><td></td><td>0.00</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>231</td><td> It was a chocolate wonderland.</td><td></td><td>0.00</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>232</td><td> So so so chocolatey and oh-so-sinful!</td><td></td><td>0.00</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>233</td><td> Might just go back to try a few more dishes but then these guys really need to sort their service and coordinate amongst themselves!</td><td>service</td><td>0.14</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>234</td><td> Nehru place social is the new buzz in town.</td><td>ambience, service</td><td>0.08</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>235</td><td> Comparitively smaller than other branches it offers a wide variety and some lip smacking food to its customers.</td><td>food, service</td><td>-0.03</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>236</td><td>  What to try:-  1)</td><td></td><td>0.00</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>237</td><td>oreo mud pot shake 2)</td><td></td><td>0.00</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>238</td><td>kitkat shake 3)</td><td></td><td>0.00</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>239</td><td>strawberry cheese cake shake 4)</td><td></td><td>0.00</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>240</td><td>S/w veg mile high club: 3 layers of toasted bread added up with cheese and veggies its just amazing to eat 5)</td><td>food</td><td>0.42</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>241</td><td>Biryani paneer makhani: biryani should be declared the national food of india.</td><td>food</td><td>0.00</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>242</td><td>paneer makhni biryani is a great combination and its taste is lipsmacking 6)</td><td></td><td>0.80</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>243</td><td>Chinese bhel : Not made in china.</td><td>service</td><td>0.00</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>244</td><td> This one was really very spicy and i love spicy food.</td><td>food</td><td>0.35</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>245</td><td>  What you would definately love 1)</td><td></td><td>0.50</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>246</td><td> Sandwich mile high club 2)</td><td></td><td>0.16</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>247</td><td>biryani paneer makhani 3)</td><td></td><td>0.00</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>248</td><td>oreo mud pot shake Its My All Time Favourite Place A Newly Opened Social Branch @Nehru Place Epicura My Favourite Drink Is Cockatail LIIT With Coke , Margretta Corona In Fish Bowl , Beera White Or Blonde With Fish N Chipps ,Chili Chicken , Chicken Pizza N White Patsa ,Veg Cheese Club Sandwitch , Chinese Snacks N Chakna , Staff Is Very Much Coperative We Ordered N Our Drinks N Food Were On The Table In Minutes  Nehru Place Social, like its Hauz Khas and Def.</td><td>food, ambience, service</td><td>-0.07</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>249</td><td> Col.</td><td></td><td>0.00</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>250</td><td> predecessors, is a curation of the same design philosophy of minimal intervention and maximum up cycling.</td><td></td><td>-0.05</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>251</td><td> The anti-design theme runs through the entire space with underlying brickwork peaking through distressed walls and much more.</td><td>ambience</td><td>0.25</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>252</td><td> The area has been maximised in terms of usage and dynamic elements have been added to make Social that much more functional.</td><td>ambience, service</td><td>0.18</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>253</td><td> Strongly believed, Social has left an indelible mark on Delhiâs food landscape with its Mile High Club Sandwiches, DIY Bruschetta, Baida Rotis, Oreo Mud Pot Shake and The Chocolate Blood Bath.</td><td>food</td><td>0.16</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>254</td><td> The cityâs favourite food has another deadly destination to devour with Nehru Place Social!</td><td>food, ambience, service</td><td>-0.08</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>255</td><td> Start your day with a Breakfast Tray or call it a night with the Big Bad Burgers.</td><td></td><td>-0.35</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>256</td><td> Go solo with a Salad or eat with a team with Socialâs Substantials and Sharing Plates.</td><td>food</td><td>0.00</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>257</td><td> Keeping its date with curiosity, the food & drinks menu more than tickles your fancy with new additions like Butter Salt & Peperoncino Wings, the Killer Kebab Platter, and the Bhoona Sausage Pao.</td><td>food, service</td><td>0.32</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>258</td><td> We tried the Water Melon Vs.</td><td></td><td>0.00</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>259</td><td> Feta Salad, and have to say that it was a perfect thing to start the summery evening with, and the way it came in a mason jar made it all the more appealing.</td><td></td><td>0.67</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>260</td><td> The next we ordered Gun Powder Calamari, a crispy beer battered fried fish served with Podi Powder and Lehsun Chutney Mayo.</td><td>food</td><td>0.00</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>261</td><td> This too tasted awesome and made for a perfect starter.</td><td></td><td>1.00</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>262</td><td> Shwarma is a newly added dish in the menu, and it was simply delectable.</td><td>food</td><td>0.07</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>263</td><td> One look at it, and the mouth starts watering.</td><td>ambience</td><td>0.00</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>264</td><td>  Also on the menu were some chicken tikka tacos and they were truly delectable.</td><td>food</td><td>-0.60</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>265</td><td> For drinks we settled for Trip on the Drip and Screw Social Driver, and both of them were amazing.</td><td>food</td><td>0.32</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>266</td><td> Somehow for me its just not possible to visit social and not have their amazing Ferrero Rocher Shake, its simply mind blowing.</td><td>service</td><td>0.16</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>267</td><td> I can never enough of it.</td><td></td><td>0.00</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>268</td><td> Social seamlessly fits into the fast-paced rush of Nehru Place.</td><td>ambience, service</td><td>0.07</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>269</td><td> Whether youâve been wandering around to get the best deal on the gadget youâve been crushing for or up for a meal after a long productive day, Social is your one stop shop.</td><td>food, service</td><td>0.35</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>270</td><td>  Food for good but service was disgusting.</td><td>food, service</td><td>-0.15</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>271</td><td> They took two visa card for security purpose and then added charges of water bottles which we even didn't ordered.</td><td></td><td>0.00</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>272</td><td> Indian kitsch at its best.</td><td></td><td>1.00</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>273</td><td> A place to be if you have a slightest design oriented spirit.</td><td>food, ambience, service</td><td>0.00</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>274</td><td> Vey well made, awesome interiors and great service.</td><td>service</td><td>0.90</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>275</td><td> The place is overwelmed with elements of Indian kitsch and desi typography.</td><td>ambience, service</td><td>0.00</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>276</td><td> You may also relate to upcycling of 1990's goods.</td><td>food, ambience, service</td><td>0.00</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>277</td><td> But great though.</td><td></td><td>0.80</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>278</td><td> (One interesting image is attached)</td><td></td><td>0.50</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>279</td><td> Very good ambiance and music.</td><td>food, ambience, service</td><td>0.91</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>280</td><td> Now comes food- tasty and in good quantity.</td><td>food, service</td><td>0.70</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>281</td><td> Price - unbelievable in budget.</td><td></td><td>-0.25</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>282</td><td> I was not able to believe the bill we got.</td><td></td><td>-0.25</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>283</td><td> Great ambience.</td><td>ambience</td><td>0.80</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>284</td><td> Finally Social comes to Epicuria's wide range of restaurants.</td><td></td><td>-0.03</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>285</td><td> Right off the bat, you'll notice their characteristic offbeat desi decor and cannot help but laud the creativity of the designers.</td><td>service</td><td>-0.09</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>286</td><td> From serving ice tea in bathtub shaped containers to the toilet paper style tissues in buckets, this place has a great feel about.</td><td>ambience, service</td><td>0.38</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>287</td><td> The food is delicious and priced very fairly for the portions they provide.</td><td>food</td><td>0.95</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>288</td><td> One must try their juicy burgers!</td><td>food</td><td>0.00</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>289</td><td> There's finally a Social in my neighborhood!</td><td>ambience</td><td>0.04</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>290</td><td> Yay!</td><td></td><td>0.00</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>291</td><td>  Been waiting for this to open ever since I found out about it.</td><td>service</td><td>0.00</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>292</td><td>  The interiors are very different as compared to the other outlets and the seating is very very innovative - you've got to see it to believe it!!</td><td></td><td>0.29</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>293</td><td>   The food is obviously how the food is at every other Social - very good!</td><td>food, service</td><td>0.23</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>294</td><td> What excites me about this place is the warmth and the comfort it offers because at the end of the day - you want great food, great ambiance and value for money from a restaurant.</td><td>food, ambience, service</td><td>0.57</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>295</td><td> This one offers all three and much more!</td><td></td><td>0.36</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>296</td><td>   Totally packed on a Sunday afternoon, this is a new addition to the awesome places in Nehru Place A brand new addition in the epicuria mall and what better than social's to give competition to the giants, nehru place social just opened up in epicuria mall the ambience is amazing and gives a great feel, the food is great as always, the service of the staff was also very nice.</td><td>food, ambience, service</td><td>0.44</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>297</td><td> Must try !!!</td><td></td><td>0.00</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>298</td><td> A new addition to the most happening hot spot in Nehru Place - Epicuria.</td><td>food, ambience, service</td><td>0.30</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>299</td><td> The ambience was alive and electric.</td><td>ambience</td><td>0.10</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>300</td><td> The music was blaring.</td><td></td><td>0.00</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>301</td><td> The crowd young and peppy.</td><td></td><td>0.10</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>302</td><td> Great place to party on a Saturday night.</td><td>ambience, service</td><td>0.80</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>303</td><td> (4/5)</td><td></td><td>0.00</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>304</td><td>  Drinks: The signature cocktails are very creative.</td><td>food</td><td>0.65</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>305</td><td> Acharoiska was a big hit with our group.</td><td></td><td>0.00</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>306</td><td> I personally loved the LIIT Toxic ...</td><td></td><td>0.70</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>307</td><td> Great twist to a classic replacing coke with cranberry and apple juice.</td><td>food</td><td>0.48</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>308</td><td> Well done!</td><td></td><td>0.00</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>309</td><td> The two lost souls in a bowl was also appreciated.</td><td></td><td>0.20</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>310</td><td> Overall for the drinks 4.</td><td>food</td><td>0.00</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>311</td><td>5/5  Food: Generally pretty good.</td><td>food, service</td><td>0.47</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>312</td><td> The chicken shwarma stood out (4.</td><td></td><td>-0.60</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>313</td><td>5/5)</td><td></td><td>0.00</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>314</td><td>, the non-veg kebab platter (4/5)</td><td></td><td>0.00</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>315</td><td> and paneer tikka (4/5)</td><td></td><td>0.00</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>316</td><td> were good.</td><td>food, service</td><td>0.70</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>317</td><td> The death wings were not as spicy as I expected them to be but were quite flavourful instead.</td><td>food</td><td>-0.10</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>318</td><td> Ordered several Baos and Paos and they were all good!</td><td>food, service</td><td>0.44</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>319</td><td> For dessert the layer cake and chocolate blood bath were excellent and highly recommended.</td><td>food, service</td><td>0.58</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>320</td><td>  Service: There is definitely room for improvement here.</td><td>service</td><td>0.00</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>321</td><td> Lot's of goof ups but I have to give high marks for effort they put in to fix things.</td><td>service</td><td>0.16</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>322</td><td> I would like to believe that these are teething problems and will go away!</td><td></td><td>0.00</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>323</td><td> Hello new social !!</td><td></td><td>0.09</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>324</td><td> Every social is special but this one has a lot more additional stuff to offer which makes this one the best out of the lot .</td><td></td><td>0.47</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>325</td><td> But I guess only as far as the interior is concerned.</td><td>service</td><td>0.05</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>326</td><td>  Food and drinks as we all know gets a thumps up !</td><td>food</td><td>0.00</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>327</td><td>  The concept gets a double thumps up .</td><td></td><td>0.00</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>328</td><td>  But Very limited seating which is a draw back and the long long waiting hours kinda gets frustrating .</td><td>service</td><td>-0.12</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>329</td><td>  Weekend is probably not a good idea to visit !</td><td>food, service</td><td>-0.44</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>330</td><td> May be weekday afternoon is !!</td><td></td><td>0.00</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>331</td><td> Gr88 place.</td><td>ambience, service</td><td>0.00</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>332</td><td> Gr88.</td><td></td><td>0.00</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>333</td><td> Ambience.</td><td>ambience</td><td>0.00</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>334</td><td> Chic place in.</td><td>ambience, service</td><td>0.00</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>335</td><td> Epicura.</td><td></td><td>0.00</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>336</td><td> Nehru.</td><td></td><td>0.00</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>337</td><td> Place.</td><td>ambience, service</td><td>0.00</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>338</td><td> Nice.</td><td></td><td>0.60</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>339</td><td> Food.</td><td>food</td><td>0.00</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>340</td><td> Art.</td><td></td><td>0.00</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>341</td><td> Deco.</td><td></td><td>0.00</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>342</td><td> Is.</td><td></td><td>0.00</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>343</td><td> Good.</td><td>food, service</td><td>0.70</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>344</td><td> Service is also.</td><td>service</td><td>0.00</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>345</td><td> Good.</td><td>food, service</td><td>0.70</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>346</td><td> Food is quite nice esp the.</td><td>food</td><td>0.60</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>347</td><td> Biryani.</td><td></td><td>0.00</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>348</td><td> Regular here.</td><td></td><td>0.00</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>349</td><td> Loved the concept of the tables being pulled up on the ceiling and the music was really good.</td><td>food, service</td><td>0.70</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>350</td><td> The food and drinks are awesome as usual!!</td><td>food</td><td>0.30</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>351</td><td> They had an event where drinks were for Rs 19 for two days and the whole of Delhi was there.</td><td>food</td><td>0.20</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>352</td><td> Whether it was beer or trip on the drip, drinks were for just 19 bucks and the event gained a lot of popularity.</td><td>food, service</td><td>0.00</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>353</td><td> Even, though it was crowded we just danced all night.</td><td></td><td>0.00</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>354</td><td> I simply love this place!!</td><td>ambience, service</td><td>0.78</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>355</td><td> Fantastic ambience and great food, fun drinks and the Uber cool relaxed vibe, Nehru place social is a must visit if you are in that area.</td><td>food, ambience, service</td><td>0.38</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>356</td><td> I cannot recommend this place enough!</td><td>ambience, service</td><td>0.00</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>357</td><td> Kudos to the entire Social team!</td><td></td><td>0.02</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>358</td><td> ð Will definitely be visiting it again Very Soon!!!</td><td></td><td>0.20</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>359</td><td> Nehru Place Social is simply Fantabulous!</td><td>ambience, service</td><td>0.02</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>360</td><td> The most trendy cafe in the Capital right now, you need to experience the Social magic for yourself.</td><td></td><td>0.38</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>361</td><td> Love the whole concept- the band wallah banner, the ferris wheel seating, and even the outside seating is great at night.</td><td></td><td>0.38</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>362</td><td> The grub is the usual social fare- tasty and fun.</td><td>food</td><td>0.03</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>363</td><td> Nehru Place Social is definitely one of my favourite hang out place.</td><td>ambience, service</td><td>0.02</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>364</td><td> Can't wait to come here again for another rocking night with friends .</td><td></td><td>0.00</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>365</td><td> Wonderful experience & something nice to look forward too.</td><td>ambience</td><td>0.80</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>366</td><td> Rs19 marketing strategy was a totally hit.</td><td></td><td>0.00</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>367</td><td> With quirkiest drinks & mouth watering dishes.</td><td>food</td><td>0.00</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>368</td><td> Ambiance of the place is also to look forward too.</td><td>ambience, service</td><td>0.00</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>369</td><td> It will definitely be my regular hangout place Another social outlet and yet with a completly different look.</td><td>ambience, service</td><td>0.01</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>370</td><td> It was quite spacious with a lot of variety for the kind of seatings you want including the circular chamber (you need reservations for the chamber!).</td><td>service</td><td>0.75</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>371</td><td> Loved what they did with the interiors, be it with the roof hanging chairs or writing nehru place within the metro sign.</td><td>ambience, service</td><td>0.70</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>372</td><td> They have numbered the tables which is nice.</td><td></td><td>0.60</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>373</td><td> Coming to the food.</td><td>food</td><td>0.00</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>374</td><td> We ordered nachos, veg burger and a social shake.</td><td></td><td>0.03</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>375</td><td> Nachos were good.</td><td>food, service</td><td>0.70</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>376</td><td> The burger was also quite good with the masala fries.</td><td>food, service</td><td>0.70</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>377</td><td> But i would like to see more variety in veg burgers.</td><td></td><td>0.50</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>378</td><td> Social shake was yum but the whipped cream was missing as it is present in the other shakes.</td><td>food</td><td>-0.07</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>379</td><td> Overall a good place to chill.</td><td>food, ambience, service</td><td>0.35</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>380</td><td> The newest addition to the social line.</td><td></td><td>0.03</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>381</td><td> Located in a very central place and certainly lives up to the social reputation.</td><td>ambience, service</td><td>0.08</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>382</td><td> Head up here for a chilled beer and some great food.</td><td>food</td><td>0.80</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>383</td><td> Don't miss out on the chilli chicken, definitely one of the best out there.</td><td></td><td>0.13</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>384</td><td> Visited the newest social at nehru place and it turned out to be a complete mood spoiler.</td><td>ambience, service</td><td>0.07</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>385</td><td>   Ambience and decor is quite good and different from the rest and I have to give it up for that.</td><td>food, ambience, service</td><td>0.35</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>386</td><td>   Service: PATHETIC, I had ordered a drink for my father, waited for 15 minutes it didn't come, went up to the counter told them and requested again, they said 'sir I'll just send it' another 15 minutes went by, then my father went and asked for the particular whisky he likes, Laphroaig @, they said, it's out of stock and that's why they had not sent it on the table.</td><td>food, service</td><td>-0.42</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>387</td><td> Then we saw a sealed bottle of Laphroaig on their counter and asked them again, then is when we finally got it after trying 4 times in 50 minutes!</td><td>service</td><td>0.00</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>388</td><td> 0.</td><td></td><td>0.00</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>389</td><td>5/5  Food: we had grilled Chicken peri peri and let me tell you, that was one of the very few times , I left my piece of chicken !</td><td>food, service</td><td>-0.40</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>390</td><td> 1/5   Thank god the ambience and beer was good ð  In the had we went someplace else and didn't even have dinner there.</td><td>food, ambience, service</td><td>0.70</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>391</td><td>   Terrible experience!</td><td></td><td>-1.00</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>392</td><td> Never going again.</td><td></td><td>0.00</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>393</td><td> I have started to believe that there is no other place in the city that can give you your 'nights to remember' other than socials.</td><td>ambience, service</td><td>-0.03</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>394</td><td> Visited this outlet last week when they had @19 promotion going on and boy, it was one hell of a jam packed place so much so that they had to close the doors at 8.</td><td>food, ambience, service</td><td>0.10</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>395</td><td> What bowled me over was their hospitality.</td><td></td><td>0.00</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>396</td><td> Its a challenge to manage so much crowd with a smile on your face when everyone is just on your head dancing, getting impatient and orders raining like cats and dogs.</td><td></td><td>0.10</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>397</td><td> I doubt anyone else could have done this but after all this is Socials.</td><td></td><td>0.00</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>398</td><td> They even closed stag entry and kept a tight check on security.</td><td>service</td><td>-0.14</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>399</td><td>   People inside had the time of their life dancing, having drinks and shots for 19 bucks and listening to some live performances.</td><td>food, ambience, service</td><td>0.14</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>400</td><td> The drinks did get stronger than usual and orders did come in late but what can one expect when there was not even an inch of empty space to stand.</td><td>food, ambience</td><td>-0.22</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>401</td><td> Quality and quantity wasn't compromised on and complaints were solved instantly.</td><td>ambience, service</td><td>0.00</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>402</td><td> That is why it is socials and the most happening place.</td><td>ambience, service</td><td>0.50</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>403</td><td>  Nehru Place outlet has quirky dÃ©cor with wheel sitting, outdoor sitting, chairs hanging on roof and a stadium like seating on one side.</td><td>ambience, service</td><td>0.00</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>404</td><td> Rest the awesomeness remains the same.</td><td></td><td>0.00</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>405</td><td> Ambience was good,quite innovative but still needs some attenton if we talk abut d covers....</td><td>food, ambience, service</td><td>0.50</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>406</td><td>food was good nd d way dey serve was quite attractive as well .....</td><td>food, service</td><td>0.75</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>407</td><td>overall exprnce was good enough ...</td><td>food, service</td><td>0.23</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>408</td><td> The first words come to the mind " damn what a place".</td><td>ambience, service</td><td>0.25</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>409</td><td> Simply amazing.</td><td></td><td>0.60</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>410</td><td> Creative n innovative drinks.</td><td>food</td><td>0.50</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>411</td><td> Great service.</td><td>service</td><td>0.80</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>412</td><td> Great leadership ( Chirag ).</td><td></td><td>0.80</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>413</td><td> This place will beat the the other around.</td><td>ambience, service</td><td>-0.12</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>414</td><td> Nehru place social..</td><td>ambience, service</td><td>0.03</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>415</td><td> i have been to hauz khas social and this place is uncomparable with it..</td><td>ambience, service</td><td>0.03</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>416</td><td> the ambience seating and everything is different..</td><td>ambience</td><td>0.00</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>417</td><td>but the menu is same..</td><td></td><td>0.00</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>418</td><td>have to wait for an hour to have a seat for two because of saturday night but the wait was worth it...</td><td></td><td>0.30</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>419</td><td> Everyone was good awesome place to hang out with ur group...</td><td>food, ambience, service</td><td>0.85</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>420</td><td> Tried cheese toast delicious taste ordered two times and those yummy mouth watering chilli potato..</td><td>food, service</td><td>1.00</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>421</td><td> LIIT was just mind blowing...</td><td>service</td><td>0.00</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>422</td><td> Nice time to be thereð Living up to #socialoffline heritage!!</td><td>service</td><td>0.94</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>423</td><td> Hatt ke decor, rusty and raw ambience,food & drinks are up to the mark...</td><td>food, ambience</td><td>-0.23</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>424</td><td>only point is the space,which is less in comparison to the crowd that make up most of the social regulars.</td><td>ambience</td><td>0.09</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>425</td><td> The ambiance and the way they serve the food is exceptionally "cool" The sitting arrangement is for the casual chit chatters especially youngsters.</td><td>food, ambience</td><td>-0.05</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>426</td><td> The way they have done up the interiors is half done up rough walls, half plastered, neglected look kind of the when the WW was on the eating joints never paid too much attention to the interiors Just the place to get together and chit chat .</td><td>food, ambience, service</td><td>0.07</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>427</td><td>  At the entrance is the bar and a exercise bike(a real bicycle recycled to act like an exercise bike)</td><td></td><td>0.20</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>428</td><td> to drink and burn calories at the same time there's a huge board of some shaadi band that is  eye catching.</td><td>food, service</td><td>0.33</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>429</td><td> giant wheel cabins (recycled again)</td><td></td><td>0.00</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>430</td><td> The way they serve the food is also "cool" There are printed tissue rolls(the print on them is one of the  USP's of that place )</td><td>food, ambience, service</td><td>0.35</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>431</td><td> - ass cleaner rolls actually - on  each table and loads of cutlery just dumped in a normal spoon stand that Casually stands on the table food is served...</td><td>food</td><td>-0.12</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>432</td><td> there are alcoholic shots served in recycled medicine bottles , iced tea served in a little glass bath tub, rotis in recycled newspapers and a lot more coo and great ideas put into action .</td><td>food, service</td><td>0.19</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>433</td><td> excellent and tasteful minds behind this eating joint Especially designed for the youngsters.</td><td>food, service</td><td>0.20</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>434</td><td>fun place to be  It just lacks good serving waiters..</td><td>food, ambience, service</td><td>0.50</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>435</td><td>at present most of them are pot bellied who do not give two hoots to how they speak or serve.</td><td>service</td><td>0.25</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>436</td><td> the Nuances of service and serving  is missing big big time probably because it still goes jam packed.</td><td>food, service</td><td>-0.07</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>437</td><td> blame it on the teenagers who probably have no idea of getting their moneys worth.</td><td></td><td>0.30</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>438</td><td> Overall nice place with warmth missing Super uncomfortable seats.</td><td>ambience, service</td><td>0.05</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>439</td><td> No match screening.</td><td></td><td>0.00</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>440</td><td> No DJ.</td><td></td><td>0.00</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>441</td><td> Poor sound quality.</td><td>ambience, service</td><td>0.00</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>442</td><td> Staff unhelpful.</td><td></td><td>0.00</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>443</td><td>   Good ambience.</td><td>food, ambience, service</td><td>0.70</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>444</td><td> Good location - Epicuria Nehru Place Metro.</td><td>food, ambience, service</td><td>0.70</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>445</td><td> This social offline is a huge disappointment.</td><td></td><td>-0.06</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>446</td><td> After waiting for half an hour, we got to seat.</td><td></td><td>-0.17</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>447</td><td> Then, service was really poor.</td><td>service</td><td>-0.40</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>448</td><td> If it is compared to its other outlets.</td><td></td><td>-0.12</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>449</td><td> This place sucks.</td><td>ambience, service</td><td>-0.30</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>450</td><td> Although things are recycled very well.</td><td></td><td>0.20</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>451</td><td> But the seating was really uncomfortable and they have seats for couples basically, for big groups they have less seats.</td><td></td><td>-0.22</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>452</td><td> Staff was not so welcoming.</td><td></td><td>0.00</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>453</td><td> Overall, being a social fan..</td><td></td><td>0.02</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>454</td><td> I didn't like it at all.</td><td></td><td>0.00</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>455</td><td> Nehru place for a long time was a grimy spot to come get my computer fixed.</td><td>ambience, service</td><td>0.03</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>456</td><td> Thanks to Social / and what the other restaurants are bringing to Epicuria.</td><td></td><td>0.04</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>457</td><td> It's become a fun spot to come work out of during the day and get into #rage mode at night.</td><td>food, service</td><td>0.30</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>458</td><td> Love the thematic decor and staff.</td><td></td><td>0.25</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>459</td><td> Great innovative drinks and food carried on from the other Socials.</td><td>food</td><td>0.39</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>460</td><td> Never again will I have to buy pirated software sober.</td><td></td><td>0.10</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>461</td><td> #winning.</td><td></td><td>0.50</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>462</td><td> Social never seizes to amaze you.</td><td></td><td>0.03</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>463</td><td> This is really one of the best restro-cafe chain in Delhi-Mumbai.</td><td></td><td>0.60</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>464</td><td> When you enter nehru social , you will notice it's completely different concept.</td><td></td><td>0.02</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>465</td><td> Nobody has and will i think will be able to do so.</td><td></td><td>0.50</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>466</td><td> The interiors are beyond explanation, one has to personally visit and experience it.</td><td></td><td>0.00</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>467</td><td> The food is just wow, i have some fixed food options which i order whenever i visit social.</td><td>food, service</td><td>0.08</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>468</td><td> The taste is the same.</td><td></td><td>0.00</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>469</td><td> Good interiors, fresh concept , amazing food at really affordable prices.</td><td>food, service</td><td>0.45</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>470</td><td>  Must visit!</td><td></td><td>0.00</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>471</td><td> This is the first time I tried any place in Nehru place and it apparently came out to be Nehru place social .</td><td>ambience, service</td><td>0.11</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>472</td><td>  Was not a very pleasant experience as it was expected to be .</td><td>food</td><td>-0.19</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>473</td><td> The interiors were quite good and eye catching , along with the swing seatings that were the first time I came across .</td><td>food, service</td><td>0.52</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>474</td><td>  We were three people and ordered food which included shawarma , butter chicken biriyani , anda mutton parantha along with mocktails .</td><td>food</td><td>-0.60</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>475</td><td>   The service was way too slow , we had to call out so many times for every assistance .</td><td>service</td><td>0.10</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>476</td><td>  Our mocktails were delivered when our food was almost over and they had forgotten to provide us that .</td><td>food</td><td>0.00</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>477</td><td>  The watermelon mint was nothing but simply the raw juice of watermelon and less cold which is a thumbs down .</td><td>food</td><td>-0.23</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>478</td><td>  The 3 stars here are only for the butter chicken biriyani and the shawarma .</td><td>food</td><td>-0.30</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>479</td><td>  They were very tasty and tummy filling .</td><td>food</td><td>0.20</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>480</td><td>   The utensils they used were not clean at all and were just washed with water as of the time therms were required .</td><td>service</td><td>-0.18</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>481</td><td>   They didn't even bother to clean the extra water over it .</td><td></td><td>0.18</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>482</td><td>   I might not prefer going there again .</td><td></td><td>0.00</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>483</td><td>   Not so happy.</td><td></td><td>0.80</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>484</td><td>  Social has a reputation of its own so we didn't have to think twice before going here.</td><td></td><td>0.32</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>485</td><td> The ambience was spectacular with innovative interiors.</td><td>ambience</td><td>0.55</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>486</td><td> There are tables and chairs hanging on the roof which can be used when needed too!</td><td>service</td><td>0.00</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>487</td><td> We were seated after a 5 minute wait.</td><td></td><td>0.00</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>488</td><td>  We ordered an Oreo shake, KitKat shake, lal Maas pao, vada pao bao and butter chicken biryani.</td><td>food</td><td>-0.60</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>489</td><td>  Lal maas pao was rich and juicy but the vada pao bao was the exact opposite.</td><td>food</td><td>0.21</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>490</td><td> The butter chicken biryani was plentiful and simply delicious!</td><td>food</td><td>0.20</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>491</td><td> The presentation of the shakes was unique but they were too sweet and heavy for my liking.</td><td>food</td><td>0.17</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>492</td><td> For 2 people who filled their tummies up to their brims, the bill was less than what we expected, 850(non-alcoholic).</td><td>food</td><td>0.04</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>493</td><td> I was disappointed with the service however.</td><td>service</td><td>-0.75</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>494</td><td> We had to call them every time and from where we were seated, they didn't always listen.</td><td>service</td><td>0.00</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>495</td><td> The 3.</td><td></td><td>0.00</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>496</td><td>5 stars is because of the amazing food and ambience and none for the service.</td><td>food, ambience, service</td><td>0.60</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>497</td><td> I tried the Pink Cream Mocktail ( below average)</td><td>food</td><td>-0.12</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>498</td><td>, the Southern Fried Chicken Burger (pretty good, chicken was well fried)</td><td>food, service</td><td>-0.05</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>499</td><td> and the Chicken Triple Schezwan China Box (average).</td><td>service</td><td>-0.38</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>500</td><td>  Overall, I am disappointed, both with the food and the service.</td><td>food, service</td><td>-0.38</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>501</td><td> Brilliant ambience!</td><td>ambience</td><td>1.00</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>502</td><td> Very friendly and helpful staff!</td><td>service</td><td>0.61</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>503</td><td> The food was brilliant and the drinks I guess everyone knows about by now!</td><td>food</td><td>1.00</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>504</td><td> The interiors are beautiful and I really liked the entry wall with all the stereotype nehru place stickers!</td><td>ambience, service</td><td>0.80</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>505</td><td> Amazing concept!</td><td></td><td>0.75</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>506</td><td>  Do visit if you are looking forward to chill and have good food with amazing cocktails!</td><td>food, ambience, service</td><td>0.73</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>507</td><td>  I'd suggest that you order whatever you like, because they very rarely let you down!</td><td>food, ambience</td><td>0.10</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>508</td><td> Went there for lunch on a hot Saturday.</td><td>food</td><td>0.25</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>509</td><td> The strawberry cheese cake shake was absolutely orgasmic and such a comforter.</td><td>food, service</td><td>0.10</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>510</td><td> I am very much in love with it.</td><td></td><td>0.50</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>511</td><td> Also had mutton dhansak which also very good.</td><td>food, service</td><td>0.91</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>512</td><td> The ambience is good, much like other socials.</td><td>food, ambience, service</td><td>0.26</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>513</td><td> Always like how the central theme for each social outlet is always the same but they customise some bits as per location After trying out Social at Hauz Khas, we thought of trying its new outlet in Nehru Place's Epicuria food mall.</td><td>food, ambience, service</td><td>0.04</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>514</td><td>  It's located on the first floor and we found it pretty crowdy on the weekend.</td><td>ambience</td><td>0.25</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>515</td><td>  The best part about this place is the innovation they have done around the options for seating.</td><td>ambience, service</td><td>1.00</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>516</td><td>  There is an inner area which has regular seats, then there are staircases which has been converted for seating two people, there are some pendulum circle seating area which can host upto 4 people at a time.</td><td>ambience, service</td><td>0.00</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>517</td><td>  We tried that moving seats and the whole experience I having food in it was great.</td><td>food</td><td>0.50</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>518</td><td>  In food, Paneer makhani biryani was brilliant and the condiments served along with it added to the whole taste.</td><td>food</td><td>0.55</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>519</td><td>  Berry iced tea was less sweet but the bar tender corrected that after we requested him so.</td><td>food, service</td><td>0.09</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>520</td><td>   The ambiance, experience is something for which you should try out this new restaurant.</td><td>ambience</td><td>0.14</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>521</td><td> Apart from the theme, everything's same as hkv social.</td><td></td><td>0.02</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>522</td><td> I love social, although this one's a bit compact but anyway who wouldn't like another Social in Delhi?!</td><td></td><td>0.19</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>523</td><td> :D Best place to hang out.</td><td>ambience, service</td><td>1.00</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>524</td><td> Food was amazing.</td><td>food</td><td>0.60</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>525</td><td> But limited veg options.</td><td></td><td>-0.07</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>526</td><td> We ordered chilly potato, Paneer tikka, white sause pasta, Oreo shake, KitKat shake and a chocolate blood bath.</td><td></td><td>-0.30</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>527</td><td> Everything was good.</td><td>food, service</td><td>0.70</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>528</td><td> Oreo shake and chocolate blood bath is something you will not get somewhere else.</td><td></td><td>0.00</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>529</td><td> So do try it if you get to go there.</td><td></td><td>0.00</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>530</td><td> After workout at the gym I decided to go to this place because it was on the same building with the gym I go.</td><td>ambience, service</td><td>0.00</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>531</td><td> So i went their the waiter don't care much about me and they gave a table to a person who is 5 minutes late.</td><td>service</td><td>-0.05</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>532</td><td> Then they ask me to wait for 30 minutes well i wait for a while after 10 minutes they gave me a table which is behind the bar which have a lot of perfume smell and it gave me a headache.</td><td>food</td><td>-0.40</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>533</td><td>I ask the waiter to change my seat and i wait for 10 minutes and he never show up.</td><td>service</td><td>0.00</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>534</td><td> I'm so angry and i went out eating nothing.</td><td>food</td><td>-0.50</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>535</td><td> I did not order food at all and I will never ever come back to this place again.</td><td>food, ambience, service</td><td>0.00</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>536</td><td> Worst experience of my life so far.</td><td>ambience, service</td><td>-0.45</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>537</td><td>  The ambience was good and the service was total night mare.</td><td>food, ambience, service</td><td>0.35</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>538</td><td> So I went out and eat at Pizzaexpress nxt to social restaurant.</td><td>food</td><td>0.03</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>539</td><td> Best food you will ever had.</td><td>food</td><td>1.00</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>540</td><td> the ambience was good and I prefer you go to this place not on social.</td><td>food, ambience, service</td><td>0.37</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>541</td><td> My friends told me that social was good and nice and that's why I decided to go their but well they suck.</td><td>food, service</td><td>0.44</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>542</td><td> I told my friends that it was a total night mare and I won't come back to social at all.</td><td>service</td><td>0.01</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>543</td><td> ðð» I apparently happen to like the food here unlike hauz khas social.</td><td>food</td><td>0.04</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>544</td><td> The ambience looking more like a mini stadium is a new arrangement and surely the moving wheels.</td><td>ambience</td><td>0.38</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>545</td><td> Living up to the social values.</td><td>service</td><td>0.03</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>546</td><td> Firstly, I am a Social Lover, so I don't care what social it is, I simply love them all because they have fantastic food with yum and innovative drinks at unbelievably amazing prices !</td><td>food, service</td><td>0.37</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>547</td><td> In this particular social I loved the concept of the place especially those 3 giant swings there and luckily I got a chance to sit in them so I loved it even more!</td><td>ambience, service</td><td>0.32</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>548</td><td> Every person who works in social have amazing ethics, they are all very good at answering any question about anything from the menu!</td><td>food, service</td><td>0.54</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>549</td><td> They remembered that I had asked them that I wanna sit in that giant swing and made sure that I get to sit in one of those as soon as one got empty.</td><td></td><td>0.13</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>550</td><td> Plus the thing about this place is that even though the concept of all the social's is the same yet they come up with amazing decor and look with every new outlet!</td><td>ambience, service</td><td>0.20</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>551</td><td> Amazing place!</td><td>ambience, service</td><td>0.75</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>552</td><td> 19 outlets in India are not enough, there should be more super soon cause it would be amazing that people in every different city/state/country get to experience the feel of this place!</td><td>ambience, service</td><td>0.29</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>553</td><td> #SocialAllTheWay Favourite hang out place!</td><td>ambience, service</td><td>0.00</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>554</td><td> â¤ï¸ This social is definitely different and adds up so much fun to Nehru place.</td><td>ambience, service</td><td>0.11</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>555</td><td> The crowd and the atmosphere there is amazing.</td><td>ambience</td><td>0.60</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>556</td><td> Food and drinks everything is good.</td><td>food, service</td><td>0.70</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>557</td><td> They have these swings and I would really like to sit in it next time.</td><td>service</td><td>0.10</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>558</td><td> Overall a must place to go when in Nehru place.</td><td>ambience, service</td><td>0.00</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>559</td><td> One of the freshest and most amazingly done places I have recently been to.</td><td>ambience, service</td><td>0.37</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>560</td><td> Apart from the one in Haus Khas, Nehru Place Social is the second best in its chain.</td><td>ambience, service</td><td>0.34</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>561</td><td>  The ambience is so cool and chic, in a very different way!</td><td>ambience</td><td>0.17</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>562</td><td> There was the staircase seating which was a great idea and the chair car was truly amazing.</td><td></td><td>0.70</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>563</td><td>  The food being the usual of Social, the ambience made it all the more attractive.</td><td>food, ambience</td><td>0.27</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>564</td><td>   Food- 5/5 Ambience-5/5 Drinks-5/5 Service -4/5  I gave a 4 for service as the waiter took very long to get us beer and had to ask us 4 times which beer we ordered.</td><td>food, service</td><td>-0.07</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>565</td><td>  Apart from that, everything was great.</td><td></td><td>0.80</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>566</td><td>  We had some Baked Nachos and Butter chicken biryani.</td><td>food</td><td>-0.60</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>567</td><td>  Nachos- Loaded with extra freshly baked cheese, the nachos are scrumptious as per Social Standards.</td><td>food</td><td>0.11</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>568</td><td>  Butter Chicken Biryani- a must try of Social, served with curd and friyums, you will be surprised how delicious this biryani tastes.</td><td>food</td><td>0.13</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>569</td><td> Pure magic.</td><td></td><td>0.36</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>570</td><td>   Loved the place!</td><td>ambience, service</td><td>0.88</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>571</td><td> Absolutely fantastic.</td><td></td><td>0.40</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>572</td><td> Officially my favorite social.</td><td></td><td>0.27</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>573</td><td> Love the design concepts, specially the tables that get pulled up to make way for a dance floor, what an idea sirji!</td><td></td><td>0.47</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>574</td><td> The additions to the menu are also fantastic and thank god you guys have given me new and way better desserts.</td><td>service</td><td>0.35</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>575</td><td> Keep on keeping team social!!</td><td></td><td>0.05</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>576</td><td> This Social is definitely different from the others.</td><td></td><td>0.02</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>577</td><td> Let's start with the seating arrangement, it's absolutely crazy.</td><td></td><td>-0.60</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>578</td><td> They have those "udan khatolas", if anyone remembers, as seats !</td><td></td><td>0.00</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>579</td><td> Hard to get that tho as everyone keeps vying for it.</td><td></td><td>-0.29</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>580</td><td>   The weirdest seats are the ones on the steps.</td><td></td><td>0.00</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>581</td><td> Have to...</td><td></td><td>0.00</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>582</td><td> I had been wanting to visit this place as soon as I got to know of it, and finally went there today.</td><td>ambience, service</td><td>0.00</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>583</td><td> The ambience is pretty cool, which they have tried to recreate a bit from their Hauz khas branch, as the entrance seems pretty similar.</td><td>ambience</td><td>0.21</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>584</td><td> One unique feature was the swing benches in the restaurant, which unfortunately I couldn't get as there was a long waiting for it.</td><td></td><td>-0.06</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>585</td><td> Coming to the food, we ordered a ferrero rocher shake, Oreo mud pot shake, fully loaded nachos, sriraja chilly chicken, and peach ice tea.</td><td>food</td><td>-0.60</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>586</td><td> All of it was delicious.</td><td>food</td><td>1.00</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>587</td><td> The nachos were pretty heavy, but weren't as loaded with cheese as I have had at other places.</td><td>food, ambience, service</td><td>-0.03</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>588</td><td> The service was quick initially, but as the crowd started coming the service went slow.</td><td>service</td><td>0.01</td></tr>
+<tr><td>socialhkv</td><td>11-03-17</td><td>589</td><td> It's a bit of an expensive place, but anyway the food was worth it.</td><td>food, ambience, service</td><td>-0.10</td></tr>
+</tbody>
+    </table>
+  </div>
+  <div class="chart_heading">Sentiment-Score <span>Comparison</span></div>
+  <div id="chart_div"></div>
+  <div class="chart_heading">Taxonomy-wise <span>Sentiment Snapshot</span></div>
+  <select id="Ultra" onchange="run()">
+<option value="1">socialhkv</option>
+</select><br><br>
+<div id="chart_div1"></div>
+</section>
+
+
+<!-- follow me template -->
+  <script src='http://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js'></script>
+
+    <script src="js/index.js"></script>
+</body>
+</html>
