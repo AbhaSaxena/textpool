@@ -8,6 +8,7 @@ Python libraries using pip:
   scipy
   sklearn
   textblob
+
 Node.js modules using npm
   express
   python-shell
