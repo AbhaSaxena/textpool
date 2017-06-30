@@ -1,6 +1,6 @@
 # textpool
 
-Install the following:
+# Install the following:
 
 Python 2.7
 
