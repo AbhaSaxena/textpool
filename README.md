@@ -6,7 +6,7 @@ Python 2.7
 
 Node.js
 
-Python libraries using pip:
+# Python libraries using pip:
 
   nltk
 
@@ -18,7 +18,7 @@ Python libraries using pip:
 
   textblob
 
-Node.js modules using npm
+# Node.js modules using npm:
 
   express
 
