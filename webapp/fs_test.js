@@ -6,9 +6,9 @@ var myPythonScriptPath2 = 'tfidf_blob.py';
 var myPythonScriptPath3 = 'tfidf_blob1.py';
 var message='';
 global.filename;
-global.detected_corpus;
 // Use python shell
 var PythonShell = require('python-shell');
+var fs = require('fs');
 
 app.use(express.static('public'));
 app.get('/index2.html', function (req, res) {
@@ -23,31 +23,56 @@ app.get('/loaded.html', function (req, res) {
 app.get('/loading2.html', function (req, res) {
    res.sendFile( __dirname + "/" + "loading2.html" );
 })
+app.get('/index0.html', function (req, res) {
+   res.sendFile( __dirname + "/" + "index0.html" );
+})
+
 app.get('/process_get', function (req, res) {
    // Prepare output in JSON format
    response = {
-      file_name:req.query.file_name
+      file_name:req.query.file_name,
+	  inputtext:req.query.inputtext
    };
-global.filename=req.query.file_name;
-   console.log(response);
-res.sendFile( __dirname + "/" + "loading.html" );
 
+   console.log(response);
+   
+if(req.query.inputtext!='')
+{
+   var path = 'C:/InputFiles/InputText/file.txt',
+buffer = new Buffer(req.query.inputtext);
+
+fs.open(path, 'w', function(err, fd) {
+    if (err) {
+        throw 'error opening file: ' + err;
+    }
+
+    fs.write(fd, buffer, 0, buffer.length, null, function(err) {
+        if (err) throw 'error writing file: ' + err;
+        fs.close(fd, function() {
+            console.log('file written');
+        })
+    });
+});
+global.filename='C:/InputFiles/InputText/';
+}
+else
+	global.filename=req.query.file_name;
+   
+//res.sendFile( __dirname + "/" + "loading.html" );
 var options = {
   mode: 'text',
   pythonOptions: ['-u'],
-  args: [req.query.file_name]
+  args: [global.filename]
 };
-PythonShell.run(myPythonScriptPath2 , options, function (err, results) {
+/*PythonShell.run(myPythonScriptPath2 , options, function (err, results) {
   if (err) throw err;
   // results is an array consisting of messages collected during execution
   console.log('results: %j', results);
-  global.detected_corpus=results[0];
-  console.log(global.detected_corpus);
 console.log('file name is : '+global.filename);
 
-});
+});*/
 
- //res.end("fin."); 
+ res.end(req.query.inputtext); 
 })
 app.get('/loading2', function (req, res) {
    // Prepare output in JSON format
@@ -82,15 +107,13 @@ var options = {
   pythonOptions: ['-u'],
   args: [global.filename]
 };
-if(req.query.corpustype=='restaurants' || (req.query.corpustype=='yes'&&global.detected_corpus=='restaurants'))
-{	
-PythonShell.run(myPythonScriptPath , options, function (err, results) {
+
+/*PythonShell.run(myPythonScriptPath , options, function (err, results) {
   if (err) throw err;
   // results is an array consisting of messages collected during execution
   console.log('results: %j', results);
 //return res.redirect('/index.html');
-});
-}
+});*/
 if(req.query.corpustype!='yes')
 {
 var options1 = {
