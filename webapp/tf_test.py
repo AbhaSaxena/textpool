@@ -6,10 +6,10 @@ from nltk.corpus import stopwords
 from nltk.tokenize import sent_tokenize,word_tokenize
 
 ##typ=sys.argv[2]
-dirc=sys.argv[1]
-directory=dirc.replace("\\","\\\\")
+#dirc=sys.argv[1]
+#directory=dirc.replace("\\","\\\\")
 typ='0'
-#directory="C:\\InputFiles\\Input6\\"
+directory="C:\\InputFiles\\InputText\\"
 os.chdir(directory)
 c=""
 for path,subdirs,files in os.walk(directory):
@@ -70,7 +70,9 @@ if typ=='0':
                 if score>maxs:
                     maxs=score
                     maxn=filename
-    if maxs>0.05:
+                print filename,score
+    print maxn,maxs    
+    if maxs>0.1:
         
         print maxn.split("_")[0]
         b=open("C:\\Users\\Administrator\\Desktop\\webapp\\loaded.html","r")
@@ -107,18 +109,6 @@ if typ=='0':
         ind=ft.find('<div class="ntext">')
         a.write(ft[:ind])
         a.write('<div class="ntext">We think this corpus is about '+maxn.split('_')[0]+'. But we are not sure.')
-        ind2=ft.find('</div>',ind)
-        a.write(ft[ind2:])
-        a.close()
-
-        b=open("C:\\Users\\Administrator\\Desktop\\webapp\\loaded.html","r")
-        ft=b.read()
-        #print ft
-        b.close()
-        a=open("C:\\Users\\Administrator\\Desktop\\webapp\\loaded.html","w")
-        ind=ft.find('<div id="imgs">')
-        a.write(ft[:ind])
-        a.write('<div id="imgs">')
         ind2=ft.find('</div>',ind)
         a.write(ft[ind2:])
         a.close()
